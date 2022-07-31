@@ -30,6 +30,13 @@ function App() {
         setSelectedCard(img);
     }
 
+    function handleOverlayClose(evt) {
+        const evtTarget = evt.target;
+        if (evtTarget.classList.contains('popup')) {
+            closeAllPopups();
+        }
+    }
+
     function closeAllPopups() {
         setEditProfilePopupOpen(false);
         setAddPlacePopupOpen(false);
@@ -38,7 +45,6 @@ function App() {
     }
 
     return (
-        <div className="body">
             <div className="page">
 
                 <Header/>
@@ -48,9 +54,9 @@ function App() {
 
                 <Footer/>
 
-                <ImagePopup card={selectedCard} onClose={closeAllPopups}></ImagePopup>
+                <ImagePopup card={selectedCard} onClose={closeAllPopups} handleOverlayClose={handleOverlayClose}></ImagePopup>
 
-                <PopupWithForm title={"Редактировать профиль"} name={"profile"} text={"Сохранить"}
+                <PopupWithForm title="Редактировать профиль" name="profile" text="Сохранить"
                                isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
                     <label className="popup__field">
                         <input className="popup__input" id="nameInput" name="name-input" placeholder="Ваше имя"
@@ -66,7 +72,7 @@ function App() {
                     </label>
                 </PopupWithForm>
 
-                <PopupWithForm title={"Новое место"} name={"place"} text={"Создать"} isOpen={isAddPlacePopupOpen}
+                <PopupWithForm title="Новое место" name="place" text="Создать" isOpen={isAddPlacePopupOpen}
                                onClose={closeAllPopups}>
                     <label className="popup__field">
                         <input className="popup__input" id="placeNameInput" name="place-name"
@@ -82,7 +88,7 @@ function App() {
                     </label>
                 </PopupWithForm>
 
-                <PopupWithForm title={"Обновить аватар"} name={"avatar"} text={"Сохранить"}
+                <PopupWithForm title="Обновить аватар" name="avatar" text="Сохранить"
                                isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
                     <label className="popup__field">
                         <input className="popup__input" id="avatarEditInput" name="avatar" type="url"
@@ -120,7 +126,6 @@ function App() {
                 </div>
 
             </div>
-        </div>
     );
 }
 

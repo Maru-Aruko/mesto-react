@@ -7,7 +7,7 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
     const [userName, setUserName] = React.useState("");
     const [userDescription, setUserDescription] = React.useState("");
     const [userAvatar, setUserAvatar] = React.useState("");
-    const [cards, addCards] = React.useState([]);
+    const [cards, setCards] = React.useState([]);
 
     React.useEffect(() => {
         Promise.all([api.getUserInfo(), api.getInitialCards()])
@@ -15,9 +15,8 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
                 setUserName(me.name);
                 setUserAvatar(me.avatar);
                 setUserDescription(me.about);
-                console.log(me, card);
 
-                addCards(card.map(item => ({
+                setCards(card.map(item => ({
                         likes: item.likes,
                         src: item.link,
                         id: item["_id"],
@@ -35,8 +34,8 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
         <main className="page__content">
             <section className="profile">
                 <div className="profile__avatar">
-                    <img className="profile__avatar-img" src={userAvatar}
-                         alt="Аватар профиля"></img>
+                    {userAvatar && (<img className="profile__avatar-img" src={userAvatar}
+                         alt="Аватар профиля"/>)}
                     <div className="profile__avatar-overlay" onClick={onEditAvatar}></div>
                 </div>
                 <div className="profile__info">

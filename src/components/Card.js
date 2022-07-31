@@ -8,7 +8,7 @@ function Card({card, onCardClick}) {
 
     return (
         <figure className="card">
-            <img className="card__img" id="cardImg" src={card.src} alt={card.alt} onClick={handleClick}></img>
+            <img className="card__img" id="cardImg" src={card.src} alt={card.alt} onClick={handleClick}/>
             <button className="card__delete-button card__delete-button_hide button" id="deleteButton"
                     type="button"></button>
             <figcaption className="card__text">
