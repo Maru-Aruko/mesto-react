@@ -1,54 +1,29 @@
 import React from "react";
-import {api} from "../utils/api";
 import Card from "./Card";
+import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
-function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
+function Main(props) {
 
-    const [userName, setUserName] = React.useState("");
-    const [userDescription, setUserDescription] = React.useState("");
-    const [userAvatar, setUserAvatar] = React.useState("");
-    const [cards, setCards] = React.useState([]);
-
-    React.useEffect(() => {
-        Promise.all([api.getUserInfo(), api.getInitialCards()])
-            .then(([me, card]) => {
-                setUserName(me.name);
-                setUserAvatar(me.avatar);
-                setUserDescription(me.about);
-
-                setCards(card.map(item => ({
-                        likes: item.likes,
-                        src: item.link,
-                        id: item["_id"],
-                        title: item.name,
-                        alt: item.name
-                    }
-                )));
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, []);
-
+    const currentUserContext = React.useContext(CurrentUserContext);
     return (
         <main className="page__content">
             <section className="profile">
                 <div className="profile__avatar">
-                    {userAvatar && (<img className="profile__avatar-img" src={userAvatar}
-                         alt="Аватар профиля"/>)}
-                    <div className="profile__avatar-overlay" onClick={onEditAvatar}></div>
+                    {currentUserContext.avatar && (<img className="profile__avatar-img" src={currentUserContext.avatar}
+                                                        alt="Аватар профиля"/>)}
+                    <div className="profile__avatar-overlay" onClick={props.onEditAvatar}></div>
                 </div>
                 <div className="profile__info">
-                    <h1 className="profile__name" id="name">{userName}</h1>
-                    <button className="profile__edit-button button" onClick={onEditProfile} type="button"
+                    <h1 className="profile__name" id="name">{currentUserContext.name}</h1>
+                    <button className="profile__edit-button button" onClick={props.onEditProfile} type="button"
                             id="editButton"></button>
-                    <p className="profile__job" id="job">{userDescription}</p>
+                    <p className="profile__job" id="job">{currentUserContext.about}</p>
                 </div>
-                <button className="profile__add-button button" onClick={onAddPlace} id="addButton"
+                <button className="profile__add-button button" onClick={props.onAddPlace} id="addButton"
                         type="button"></button>
             </section>
             <section className="cards">
-                {cards.map((item) => <Card card={item} key={item["id"]} onCardClick={onCardClick}></Card>)}
+                {props.cards.map((card) => <Card card={card} key={card["_id"]} onCardClick={props.onCardClick}></Card>)}
             </section>
         </main>
     )

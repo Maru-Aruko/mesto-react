@@ -4,6 +4,8 @@ import Footer from "./Footer";
 import Main from "./Main";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
+import {api} from "../utils/api";
+import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
 
 function App() {
@@ -11,6 +13,9 @@ function App() {
     const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
     const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
     const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
+
+    const [currentUser, setCurrentUser] = React.useState({});
+    const [cards, setCards] = React.useState([]);
 
     const [selectedCard, setSelectedCard] = React.useState({});
 
@@ -44,23 +49,37 @@ function App() {
         setSelectedCard({});
     }
 
+    React.useEffect(() => {
+        Promise.all([api.getUserInfo(), api.getInitialCards()])
+            .then(([me,cards]) => {
+                setCurrentUser(me);
+                setCards(cards);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
+
     return (
+        <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
 
                 <Header/>
 
                 <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
-                      onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick}/>
+                      onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} cards={cards}/>
 
                 <Footer/>
 
-                <ImagePopup card={selectedCard} onClose={closeAllPopups} handleOverlayClose={handleOverlayClose}></ImagePopup>
+                <ImagePopup card={selectedCard} onClose={closeAllPopups}
+                            handleOverlayClose={handleOverlayClose}></ImagePopup>
 
                 <PopupWithForm title="Редактировать профиль" name="profile" text="Сохранить"
                                isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
                     <label className="popup__field">
                         <input className="popup__input" id="nameInput" name="name-input" placeholder="Ваше имя"
-                                defaultValue="Жак-Ив Кусто"
+                               defaultValue="Жак-Ив Кусто"
                                minLength="2" maxLength="40" required></input>
                         <span className="popup__input-error nameInputError" id="nameInputError"></span>
                     </label>
@@ -126,6 +145,7 @@ function App() {
                 </div>
 
             </div>
+        </CurrentUserContext.Provider>
     );
 }
 
