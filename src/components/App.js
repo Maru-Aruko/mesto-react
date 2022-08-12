@@ -6,6 +6,7 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import {api} from "../utils/api";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
 
 
 function App() {
@@ -60,6 +61,31 @@ function App() {
             });
     }, []);
 
+    function handleCardLike(card) {
+        // Снова проверяем, есть ли уже лайк на этой карточке
+        const isLiked = card["likes"].some(i => i["_id"] === currentUser["_id"]);
+
+        // Отправляем запрос в API и получаем обновлённые данные карточки
+        api.changeLikeCardStatus(card["_id"], !isLiked).then((newCard) => {
+            setCards((state) => state.map((c) => c["_id"] === card["_id"] ? newCard : c));
+        });
+    }
+
+    function handleCardDelete(card) {
+        api.removeCard(card["_id"]).then(() => {
+            setCards((items) => items.filter((c) => c["_id"] !== card["_id"] && c));
+        }).catch((err) => {
+            console.error(err);
+        });
+    }
+
+    function handleUpdateUser(data) {
+        api.setProfile(data)
+            .then((dataUser) => {
+                setCurrentUser(dataUser);
+                closeAllPopups();
+            })
+    }
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
@@ -68,28 +94,13 @@ function App() {
                 <Header/>
 
                 <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
-                      onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} cards={cards}/>
+                      onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} cards={cards}
+                      onCardLike={handleCardLike} onCardDelete={handleCardDelete}/>
 
                 <Footer/>
 
                 <ImagePopup card={selectedCard} onClose={closeAllPopups}
                             handleOverlayClose={handleOverlayClose}></ImagePopup>
-
-                <PopupWithForm title="Редактировать профиль" name="profile" text="Сохранить"
-                               isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
-                    <label className="popup__field">
-                        <input className="popup__input" id="nameInput" name="name-input" placeholder="Ваше имя"
-                               defaultValue="Жак-Ив Кусто"
-                               minLength="2" maxLength="40" required></input>
-                        <span className="popup__input-error nameInputError" id="nameInputError"></span>
-                    </label>
-                    <label className="popup__field">
-                        <input className="popup__input" id="jobInput" name="job-input" placeholder="О себе"
-                               defaultValue="Исследователь океана"
-                               minLength="2" maxLength="200" required></input>
-                        <span className="popup__input-error jobInputError" id="jobInputError"></span>
-                    </label>
-                </PopupWithForm>
 
                 <PopupWithForm title="Новое место" name="place" text="Создать" isOpen={isAddPlacePopupOpen}
                                onClose={closeAllPopups}>
@@ -116,6 +127,7 @@ function App() {
                     </label>
                 </PopupWithForm>
 
+                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
                 <div className="popup" id="popupConfirm">
                     <div className="popup__container" id="formConfirm">

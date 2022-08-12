@@ -34,8 +34,8 @@ class Api {
             method: "PATCH",
             headers: this._token,
             body: JSON.stringify({
-                name: data["name-input"],
-                about: data["job-input"]
+                name: data["name"],
+                about: data["about"]
             })
         })
             .then(this._checkResponse)
@@ -92,7 +92,17 @@ class Api {
         })
             .then(this._checkResponse)
     }
+
+    //Получаем обновлённые данные карточки
+    changeLikeCardStatus(cardId, isLiked) {
+        if (isLiked) {
+            return this.addLike(cardId);
+        } else {
+            return this.removeLike(cardId);
+        }
+    }
 }
+
 
 export const api = new Api({
     url: 'https://mesto.nomoreparties.co/v1/cohort-45',
