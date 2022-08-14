@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
-function Main(props, cards) {
+function Main(props) {
 
     const currentUserContext = React.useContext(CurrentUserContext);
     return (
@@ -27,6 +27,7 @@ function Main(props, cards) {
                                                  key={card["_id"]}
                                                  onCardClick={props.onCardClick}
                                                  onCardLike={props.onCardLike}
+                                                 onConfirm={props.onConfirm}
                                                  onCardDelete={props.onCardDelete}></Card>)}
             </section>
         </main>
