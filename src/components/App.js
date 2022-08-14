@@ -2,7 +2,6 @@ import React from 'react';
 import Header from "./Header";
 import Footer from "./Footer";
 import Main from "./Main";
-//import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import {api} from "../utils/api";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
@@ -10,7 +9,6 @@ import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ConfirmPopup from "./ConfirmPopup";
-
 
 function App() {
 
@@ -87,12 +85,17 @@ function App() {
     }
 
     function handleCardDelete(card) {
+        setIsLoading(true)
         api.removeCard(card["_id"]).then(() => {
             setCards((items) => items.filter((c) => c["_id"] !== card["_id"] && c));
             closeAllPopups();
-        }).catch((err) => {
-            console.error(err);
-        });
+        })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
 
     function handleUpdateUser(data) {
@@ -101,6 +104,9 @@ function App() {
             .then((dataUser) => {
                 setCurrentUser(dataUser);
                 closeAllPopups();
+            })
+            .catch((err) => {
+                console.error(err);
             })
             .finally(() => {
                 setIsLoading(false);
@@ -159,7 +165,7 @@ function App() {
                                isLoading={isLoading}/>
 
                 <ConfirmPopup card={selectedCard} isOpen={isConfirmPopupOpen} onClose={closeAllPopups}
-                              onConfirm={handleCardDelete}/>
+                              onConfirm={handleCardDelete} isLoading={isLoading}/>
 
             </div>
         </CurrentUserContext.Provider>

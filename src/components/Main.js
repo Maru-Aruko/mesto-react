@@ -27,7 +27,6 @@ function Main(props) {
                                                  key={card["_id"]}
                                                  onCardClick={props.onCardClick}
                                                  onCardLike={props.onCardLike}
-                                                 onConfirm={props.onConfirm}
                                                  onCardDelete={props.onCardDelete}></Card>)}
             </section>
         </main>

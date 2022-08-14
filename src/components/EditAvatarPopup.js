@@ -1,7 +1,7 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function EditAvatarPopup({isOpen,onClose, onUpdateAvatar, isLoading}) {
+function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
 
     const avatarRef = React.useRef();
 
@@ -10,7 +10,7 @@ function EditAvatarPopup({isOpen,onClose, onUpdateAvatar, isLoading}) {
         onUpdateAvatar({
             avatar: avatarRef.current.value,
         });
-        avatarRef.current.value="";
+        avatarRef.current.value = "";
     }
 
     return (
