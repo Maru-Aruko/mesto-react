@@ -25,7 +25,7 @@ function App() {
 
     const [selectedCard, setSelectedCard] = React.useState({});
 
-    //const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     function handleEditProfileClick() {
         setEditProfilePopupOpen(true);
@@ -39,7 +39,7 @@ function App() {
         setEditAvatarPopupOpen(true);
     }
 
-    function handleConfirmClick(card){
+    function handleConfirmClick(card) {
         setIsConfirmPopupOpen(true);
         setSelectedCard(card)
     }
@@ -67,7 +67,7 @@ function App() {
 
     React.useEffect(() => {
         Promise.all([api.getUserInfo(), api.getInitialCards()])
-            .then(([me,cards]) => {
+            .then(([me, cards]) => {
                 setCurrentUser(me);
                 setCards(cards);
             })
@@ -96,31 +96,45 @@ function App() {
     }
 
     function handleUpdateUser(data) {
+        setIsLoading(true)
         api.setProfile(data)
             .then((dataUser) => {
                 setCurrentUser(dataUser);
                 closeAllPopups();
             })
+            .finally(() => {
+                setIsLoading(false);
+            });
+
     }
 
     const handleUpdateAvatar = (newAvatar) => {
+        setIsLoading(true)
         api.changeAvatar(newAvatar)
             .then((data) => {
-                setCurrentUser(data)
-                closeAllPopups()
+                setCurrentUser(data);
+                closeAllPopups();
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
+            .finally(() => {
+                setIsLoading(false);
+            });
+
     }
 
     function handleAddPlaceSubmit(data) {
+        setIsLoading(true)
         api.addNewCard(data)
             .then((newCard) => {
                 setCards([newCard, ...cards]);
                 closeAllPopups();
             })
-            .catch(err => console.log(err));
-    }
+            .catch(err => console.log(err))
+            .finally(() => {
+                setIsLoading(false);
+            })
 
+    }
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
@@ -130,17 +144,22 @@ function App() {
 
                 <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
                       onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} cards={cards}
-                      onCardLike={handleCardLike} onCardDelete={handleConfirmClick} />
+                      onCardLike={handleCardLike} onCardDelete={handleConfirmClick}/>
 
                 <Footer/>
 
-                <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups} handleOverlayClose={handleOverlayClose}></ImagePopup>
+                <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups}
+                            handleOverlayClose={handleOverlayClose}></ImagePopup>
 
-                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-                <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
-                <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}
+                                  onUpdateUser={handleUpdateUser} isLoading={isLoading}/>
+                <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}
+                                 onUpdateAvatar={handleUpdateAvatar} isLoading={isLoading}/>
+                <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit}
+                               isLoading={isLoading}/>
 
-                <ConfirmPopup card={selectedCard} isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onConfirm={handleCardDelete} />
+                <ConfirmPopup card={selectedCard} isOpen={isConfirmPopupOpen} onClose={closeAllPopups}
+                              onConfirm={handleCardDelete}/>
 
             </div>
         </CurrentUserContext.Provider>

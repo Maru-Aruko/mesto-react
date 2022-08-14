@@ -34,7 +34,7 @@ function Card(props) {
                     type="button" onClick={handleDeleteClick}></button>
             <figcaption className="card__text">
                 <h3 className="card__name" id="cardName">{props.card.name}</h3>
-                <button className={cardLikeButtonClassName}  type="button" onClick={handleLikeClick}></button>
+                <button className={cardLikeButtonClassName} type="button" onClick={handleLikeClick}></button>
             </figcaption>
             <p className="card__like-counter">{props.card["likes"].length}</p>
         </figure>
