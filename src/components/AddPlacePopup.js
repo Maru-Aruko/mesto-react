@@ -20,9 +20,12 @@ function AddPlacePopup({isOpen, onClose, onAddPlace, isLoading}) {
             name,
             link,
         });
-        setLink("")
-        setName("")
     }
+
+    React.useEffect(() => {
+        setName("");
+        setLink("");
+    }, [isOpen]);
 
     return (
         <PopupWithForm title="Новое место"
